@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{%block style%} 
+
+
+.Container{
+    
+    border-radius: 50;}
+
+
+    table thead tr {
+    height: 60px;
+    background: #36304a;}
+
+    th,td{
+        margin-left: 30px;
+        padding: 30px;
+    }
+
+   td > a:link{
+        background-color: white;
+        color: black;
+        border: 2px solid green;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+    tbody a:hover, a:active {
+        background-color: green;
+        color: white;
+      }
+
+    td,th{
+        text-align: center;
+    }
+
+
+{%endblock style%}
+
+
+{% block body %}
+<div id="international"></div>
+
+<div class="Container my-5 mx-5"  id="ScholarshipTable">
+    
+    <h2>International Scholarships</h2> <p><a href="#local">Or Navigate to local Pakistani Scholarships</a></p><br>
+
+    
+    
+    <table>
+        <thead>
+            <tr style="color: aliceblue;">
+                <th>University</th>
+                <th>Scholarship</th>
+                <th>Country</th>
+                <th>Degree</th>
+                <th>Deadline</th>
+                <th>Course Starts</th>
+                <th>Action</th>
+            </tr>
+
+            <tbody>
+
+                {% for i in scholarships %}
+                
+                <tr style="border-bottom:1pt solid black;">
+                    <td><b>{{i.university}}</b></td>
+                    <td>{{i.scholarship_title}}</td>
+                    <td>{{i.country}}</td>
+                    <td>{{i.degree}}</td>
+                    <td>{{i.deadline}}</td>
+                    <td>{{i.course_start}}</td>
+                    <td><a href="{{i.url}}" target="_blank">Apply</a></td>
+    
+                
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+
+            
+        </thead>
+        
+        
+
+        <tr></tr>
+    </table>
+</div>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <!-- Pagination links will be dynamically generated using JavaScript -->
+    </ul>
+    
+</nav>
+
+
+
+<div class="my-5 mx-5">
+    <h2 id="local">Local Scholarships</h2><br>
+    
+    
+               
+                
+                <ol>
+                    <li><a href="http://hashoofoundation.org/" target="_blank">Hashoo Foundation Scholarship Program</a></li>
+                    <li><a href="http://www.giki.edu.pk/" target="_blank">Provincial governments scholarships in GIKI on need basis</a></li>
+                    <li><a href="http://hamdardfoundation.org/?page_id=695" target="_blank">Hamdard Foundation Pakistan</a></li>
+                    <li><a href="https://www.facebook.com/pages/Young-Leaders-Programme/716376955103322?sk=timeline&amp;ref=page_internal" target="_blank">NGO YLP (Youngs leaders Programme)</a></li>
+                    <li><a href="https://www.facebook.com/pages/DALDA-Scholarships/351850304919327" target="_blank">Dalda foundation scholarship</a></li>
+                    <li><a href="http://www.fauji.org.pk/" target="_blank">Fauji Foundation Scholarships</a></li>
+                    <li><a href="https://www.nbp.com.pk/studentloan/" target="_blank">Student Loan Scheme</a></li>
+                    <li><a href="http://pecongress.org.pk/" target="_blank">Pakistan Engineering Congress Scholarships</a></li>
+                    <li><a href="http://www.peef.org.pk/" target="_blank">PEEF Scholarships</a></li>
+                    <li><a href="http://nts.org.pk/Produ%E2%80%A6/NTS_Scholarship/scholarship.php" target="_blank">NTS Scholarships</a></li>
+                    <li><a href="http://www.alfalahss.org/" target="_blank">Alfalah Scholarship Scheme</a></li>
+                    <li><a href="http://nthp.iba.edu.pk/" target="_blank">IBA Talent Hunt Program</a></li>
+                    <li><a href="http://lums.edu.pk/nop/" target="_blank">LUMS NOP Program</a></li>
+                    <li><a href="http://www.diyapak.org/" target="_blank">Diya Pakistan Funds</a></li>
+                    <li><a href="http://www.hec.gov.pk/%E2%80%A6/USAIDFunded%E2%80%A6/Pages/Introduction.aspx" target="_blank">USAID Scholarships</a></li>
+                    <li><a href="http://gcuf.edu.pk/sitara-chemical-industries-ltd-talent-s%E2%80%A6/" target="_blank">Sitara Chemical Industries Ltd. Talent Scholarship</a></li>
+                    <li><a href="http://www.uok.edu.pk/sfao/scholarships.php" target="_blank">Scholarships from 'Bismillah Bibi and Mrs. Talat Jamil Scholarship trust</a></li>
+                    <li><a href="http://www.kif.com.pk/" target="_blank">Karwan e Ilm Foundation</a></li>
+                    <li><a href="http://www.uaar.edu.pk/src/scho-gur.php" target="_blank">gurmani foundation</a></li>
+                    <li><a href="http://www.shell.com.pk/%E2%80%A6/local-initiatives/scholarship.html" target="_blank">Shell Pakistan Scholarships</a></li>
+                    <li><a href="http://www.ictrdf.org.pk/" target="_blank">National ict scholarship program</a></li>
+                    <li><a href="http://www.fef.edu.pk/" target="_blank">Frontier Education Foundation</a></li>
+                    <li><a href="http://www.fef.edu.pk/" target="_blank">Frontier Education Foundation</a></li>
+                    <li><a href="http://www.pwwb.com.pk/" target="_blank">Punjab Workers welfare Board</a></li>
+                    <li><a href="http://ciit-isb.edu.pk/NEFiles/CIITEF_Schlarship.htm" target="_blank">CIITEF Scholarships</a></li>
+                    </ol>
+  
+</div>
+
+
+<div class="my-5 mx-5 text-center">
+    <a href="#international">Back to Top of Page</a>
+</div>
+
+
+
+
+<script>
+    // Your existing filterJobs function
+
+    // Pagination
+    function updatePagination(currentPage, totalPages) {
+        var paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = ''; // Clear existing pagination links
+    
+        var maxVisibleLinks = 10;
+        var startPage = Math.max(1, currentPage - Math.floor(maxVisibleLinks / 2));
+        var endPage = Math.min(startPage + maxVisibleLinks - 1, totalPages);
+    
+        if (startPage > 1) {
+            addPaginationLink('Previous', currentPage - 1);
+        }
+    
+        for (var i = startPage; i <= endPage; i++) {
+            addPaginationLink(i, i);
+        }
+    
+        if (endPage < totalPages) {
+            addPaginationLink('Next', currentPage + 1);
+        }
+    }
+    
+    function addPaginationLink(label, pageNumber) {
+        var li = document.createElement('li');
+        li.classList.add('page-item');
+        var a = document.createElement('a');
+        a.classList.add('page-link');
+        a.href = '#';
+        a.innerText = label;
+    
+        if (label === pageNumber) {
+            li.classList.add('active');
+        }
+    
+        a.onclick = function () {
+            changePage(pageNumber);
+        };
+    
+        li.appendChild(a);
+        document.querySelector('.pagination').appendChild(li);
+    }
+    function showMorePages() {
+        var currentPage = document.querySelector('.pagination .active').innerText;
+        changePage(parseInt(currentPage) + 1);
+    }
+    
+    function showPreviousPages() {
+        var currentPage = document.querySelector('.pagination .active').innerText;
+        changePage(parseInt(currentPage) - 1);
+    }
+    
+
+    function changePage(pageNumber) {
+        var rowsPerPage = 15;
+        var start = (pageNumber - 1) * rowsPerPage;
+        var end = start + rowsPerPage;
+
+        var tableRows = document.querySelectorAll('#ScholarshipTable tbody tr');
+        tableRows.forEach(function (row, index) {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        updatePagination(pageNumber, Math.ceil(tableRows.length / rowsPerPage));
+    }
+
+    // Initialize pagination on page load
+    window.onload = function () {
+        changePage(1);
+    };
+</script>
+
+{% endblock body %}

@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% block style %}
+    .flexContainer {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center; /* Vertically center the container */
+        min-height: 100vh; /* Set a minimum height to center the container */
+        border-radius: 50;
+    }
+
+    .container {
+        width: 100%;
+      
+    }
+
+    table thead tr {
+       
+        background: #36304a;
+        border-color: #36304a;
+    }
+
+    th, td {
+        margin-left: 30px;
+        padding: 15px; /* Adjusted padding for better spacing */
+        word-wrap: break-word; /* Allow words to be broken and wrap onto the next line */
+        white-space: normal;
+    }
+
+    td > a:link {
+        background-color: white;
+        color: black;
+        border: 2px solid green;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    tbody a:hover, a:active {
+        background-color: green;
+        color: white;
+    }
+
+   
+
+    .table {
+        --bs-table-color-type: initial;
+        --bs-table-bg-type: initial;
+        --bs-table-color-state: initial;
+        --bs-table-bg-state: initial;
+        --bs-table-color: #366ea5;
+        --bs-table-bg: #e9e4e4;
+    }
+    .table-container {
+        overflow-x: auto;
+       
+    }
+
+{% endblock style %}
+
+{% block body %}
+<div class="flexContainer my-5">
+    <div class="container mx-5">
+        <form class="row g-3">
+            <div class="col-md-4">
+                <label for="keyword" class="form-label">Search by Keyword:</label>
+                <input type="text" class="form-control" id="keyword" oninput="filterJobs()" placeholder="Enter keyword">
+            </div>
+            <div class="col-md-4">
+                <label for="category" class="form-label">Filter by Category:</label>
+                <select class="form-select" id="category" onchange="filterJobs()">
+                    <option value="">All Categories</option>
+                    <option value="Information Technology">IT</option>
+                    <option value="Healthcare and Medicine">Healthcare</option>
+                    <option value="Business and Management">Business and Management</option>
+                    <option value="Education">Education</option>
+                    <option value="Engineering and Manufacturing">Engineering</option>
+                </select>
+            </div>
+        </form>
+    <table class="table my-3 table-container"  id="jobTable">
+        <thead>
+            <tr >
+                <th>Company Name</th>
+                <th>Job Title</th>
+                <th>Job Description</th>
+                <th>Salary</th>
+                <th>Publish Date</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Action</th>
+                <th>Save</th>
+            </tr>
+
+            <tbody>
+
+                {% for i in jobs %}
+                
+                <tr style="border-bottom:1pt solid black;">
+                    <td><b>{{i.company}}</b></td>
+                    <td>{{i.job_title}}</td>
+                    <td>{{i.job_description}}</td>
+                    <td>{{i.salary}}</td>
+                    <td>{{i.publish_date}}</td>
+                    <td>{{i.location}}</td>
+                    <td>{{i.category}}</td>
+                    <td><a href="{{i.url}}" target="_blank" onclick="logClick({{ i.job_id }})">Apply</a></td>
+                    <td>
+                        <form id="saveForm{{ i.job_id }}">
+                            {% csrf_token %}
+                            <button type="button" class="btn {% if user in i.users_saved.all %}btn-success{% else %}btn-primary{% endif %}" onclick="toggleSave({{ i.job_id }})">
+                                {% if user in i.users_saved.all %}Undo{% else %}Save{% endif %}
+                            </button>
+                            
+                        </form>
+                    </td>
+                    
+    
+                
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+
+            
+        </thead>
+        
+        
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <!-- Pagination links will be dynamically generated using JavaScript -->
+        </ul>
+        
+    </nav>
+</div>
+
+<script>
+    // Your existing filterJobs function
+
+    // Pagination
+    function updatePagination(currentPage, totalPages) {
+        var paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = ''; // Clear existing pagination links
+    
+        var maxVisibleLinks = 10;
+        var startPage = Math.max(1, currentPage - Math.floor(maxVisibleLinks / 2));
+        var endPage = Math.min(startPage + maxVisibleLinks - 1, totalPages);
+    
+        if (startPage > 1) {
+            addPaginationLink('Previous', currentPage - 1);
+        }
+    
+        for (var i = startPage; i <= endPage; i++) {
+            addPaginationLink(i, i);
+        }
+    
+        if (endPage < totalPages) {
+            addPaginationLink('Next', currentPage + 1);
+        }
+    }
+    
+    function addPaginationLink(label, pageNumber) {
+        var li = document.createElement('li');
+        li.classList.add('page-item');
+        var a = document.createElement('a');
+        a.classList.add('page-link');
+        a.href = '#';
+        a.innerText = label;
+    
+        if (label === pageNumber) {
+            li.classList.add('active');
+        }
+    
+        a.onclick = function () {
+            changePage(pageNumber);
+        };
+    
+        li.appendChild(a);
+        document.querySelector('.pagination').appendChild(li);
+    }
+    function showMorePages() {
+        var currentPage = document.querySelector('.pagination .active').innerText;
+        changePage(parseInt(currentPage) + 1);
+    }
+    
+    function showPreviousPages() {
+        var currentPage = document.querySelector('.pagination .active').innerText;
+        changePage(parseInt(currentPage) - 1);
+    }
+    
+
+    function changePage(pageNumber) {
+        var rowsPerPage = 15;
+        var start = (pageNumber - 1) * rowsPerPage;
+        var end = start + rowsPerPage;
+
+        var tableRows = document.querySelectorAll('#jobTable tbody tr');
+        tableRows.forEach(function (row, index) {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        updatePagination(pageNumber, Math.ceil(tableRows.length / rowsPerPage));
+    }
+
+    // Initialize pagination on page load
+    window.onload = function () {
+        changePage(1);
+    };
+</script>
+
+
+
+<script>
+    function saveJob(jobId) {
+        // Send an AJAX request to save the job
+        fetch(`/save_job/${jobId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        }).then(response => {
+            if (response.ok) {
+                // Update button text and color after successful save
+                const saveButton = document.getElementById(`saveForm${jobId}`).querySelector('button');
+                saveButton.innerText = 'Saved';
+                saveButton.classList.remove('btn-primary');
+                saveButton.classList.add('btn-success');
+            }
+        });
+    }
+
+    
+</script>
+
+<script>
+    function logClick(jobId) {
+        fetch(`/log_click/${jobId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: JSON.stringify({}),
+        }).then(response => {
+            if (response.ok) {
+                console.log(`Job ${jobId} clicked successfully.`);
+            } else {
+                console.error(`Failed to log click for job ${jobId}.`);
+            }
+        });
+    }
+</script>
+
+
+
+
+<script>
+    function toggleSave(jobId) {
+        const saveButton = document.getElementById(`saveForm${jobId}`).querySelector('button');
+        const isSaved = saveButton.classList.contains('btn-success');
+
+        // Send an AJAX request to toggle the save state
+        fetch(`/toggle_save/${jobId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        }).then(response => {
+            if (response.ok) {
+                // Update button text and color after successful toggle
+                saveButton.innerText = isSaved ? 'Save' : 'Undo';
+                saveButton.classList.toggle('btn-primary', !isSaved);
+                saveButton.classList.toggle('btn-success', isSaved);
+            }
+        });
+    }
+</script>
+
+<script>
+    function filterJobs() {
+        var keyword = document.getElementById('keyword').value.toLowerCase();
+        var category = document.getElementById('category').value.toLowerCase();
+        var tableRows = document.querySelectorAll('#jobTable tbody tr');
+
+        tableRows.forEach(function (row) {
+            var company = row.querySelector('td:nth-child(1)').innerText.toLowerCase();
+            var jobTitle = row.querySelector('td:nth-child(2)').innerText.toLowerCase();
+            var jobCategory = row.querySelector('td:nth-child(7)').innerText.toLowerCase();
+
+            var keywordMatch = company.includes(keyword) || jobTitle.includes(keyword);
+            var categoryMatch = category === '' || jobCategory === category;
+
+            if (keywordMatch && categoryMatch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+
+{% endblock body %}

@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block style %}
+canvas {
+    max-width: 80%;
+    height: auto;
+}
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+
+  .b-example-divider {
+    width: 100%;
+    height: 3rem;
+    background-color: rgba(0, 0, 0, .1);
+    border: solid rgba(0, 0, 0, .15);
+    border-width: 1px 0;
+    box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+  }
+
+  .b-example-vr {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 100vh;
+  }
+
+  .bi {
+    vertical-align: -.125em;
+    fill: currentColor;
+  }
+
+  .nav-scroller {
+    position: relative;
+    z-index: 2;
+    height: 2.75rem;
+    overflow-y: hidden;
+  }
+
+  .nav-scroller .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    overflow-x: auto;
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .btn-bd-primary {
+    --bd-violet-bg: #712cf9;
+    --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+    --bs-btn-font-weight: 600;
+    --bs-btn-color: var(--bs-white);
+    --bs-btn-bg: var(--bd-violet-bg);
+    --bs-btn-border-color: var(--bd-violet-bg);
+    --bs-btn-hover-color: var(--bs-white);
+    --bs-btn-hover-bg: #6528e0;
+    --bs-btn-hover-border-color: #6528e0;
+    --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+    --bs-btn-active-color: var(--bs-btn-hover-color);
+    --bs-btn-active-bg: #5a23c8;
+    --bs-btn-active-border-color: #5a23c8;
+  }
+
+  .bd-mode-toggle {
+    z-index: 1500;
+  }
+
+  .bd-mode-toggle .dropdown-menu .active .bi {
+    display: block !important;
+  }
+  .flexContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Vertically center the container */
+    min-height: 100vh; /* Set a minimum height to center the container */
+    border-radius: 50;
+}
+
+.container {
+    width: 100%;
+  
+}
+
+table thead tr {
+   
+    background: #36304a;
+    border-color: #36304a;
+}
+
+th, td {
+    margin-left: 30px;
+    padding: 15px; /* Adjusted padding for better spacing */
+    word-wrap: break-word; /* Allow words to be broken and wrap onto the next line */
+    white-space: normal;
+}
+
+td > a:link {
+    background-color: white;
+    color: black;
+    border: 2px solid green;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+tbody a:hover, a:active {
+    background-color: green;
+    color: white;
+}
+
+
+
+.table {
+    --bs-table-color-type: initial;
+    --bs-table-bg-type: initial;
+    --bs-table-color-state: initial;
+    --bs-table-bg-state: initial;
+    --bs-table-color: #366ea5;
+    --bs-table-bg: #e9e4e4;
+}
+.table-container {
+    overflow-x: auto;
+   
+}
+
+{% endblock style %}
+{% block dash %}active aria-current="page" {% endblock dash%}
+{% block body %}   
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container my-5">
+    <div class="p-5 text-center bg-body-tertiary rounded-3">
+      <img class="bi mt-4 mb-3" style="color: var(--bs-indigo);" width="200" height="100" src="/static/logo.png"></img>
+      <h1 class="text-body-emphasis">Jobs Dashboard</h1>
+      
+      <div class="d-inline-flex gap-2 mb-5 my-5">
+        <button class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" type="button">
+         
+          <a style="color:white"  href="#graph">View Graph</a>
+        </button>
+        <button class="btn btn-outline-secondary btn-lg px-4 rounded-pill " type="button">
+          <a href="#clickHistory">Job Click History</a>
+        </button>
+      </div>
+    </div>
+</div>
+  
+<div class="b-example-divider" id="graph"></div>
+
+ <canvas id="clicksChart" width="400" height="170"></canvas>
+
+ <div class="b-example-divider" ></div>
+
+ 
+      
+     
+     
+        <!-- Your table for the last 50 clicked jobs -->
+        <h2 class="text-center my-3" id="clickHistory">Click History</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Job Title</th>
+              <th scope="col">Category</th>
+              <th scope="col">Company</th>
+              <th scope="col">Publish Date</th>
+              <th scope="col">Date Clicked</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for click_history in jobs_clicked|slice:":50" %}
+              <tr>
+                <td>{{ click_history.job.job_title }}</td>
+                <td>{{ click_history.job.category }}</td>
+                <td>{{ click_history.job.company }}</td>
+                <td>{{ click_history.job.publish_date }}</td>
+                <td>{{ click_history.date_clicked }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    
+    
+
+
+ 
+
+        <script>
+          // Your JavaScript code to create the graph
+          document.addEventListener('DOMContentLoaded', function () {
+              var ctx = document.getElementById('clicksChart').getContext('2d');
+              var categories = {{ categories|safe }};
+              var clickCounts = {{ click_counts|safe }};
+      
+              var clicksChart = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                      labels: categories,
+                      datasets: [{
+                          label: 'Click Counts',
+                          data: clickCounts,
+                          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                          borderColor: 'rgba(75, 192, 192, 1)',
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      scales: {
+                          y: {
+                              beginAtZero: true
+                          }
+                      }
+                  }
+              });
+          });
+      </script>
+{% endblock body %}
